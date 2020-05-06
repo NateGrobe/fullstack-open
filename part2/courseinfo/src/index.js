@@ -27,6 +27,7 @@ const Part = ({part, exercise}) => {
 }
 
 const Total = ({parts}) => {
+    // had to make a change to the file for 2.3
     const total = parts.reduce((sum, part) => sum + part.exercises, 0)
 
     return (
