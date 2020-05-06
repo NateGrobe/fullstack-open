@@ -6,16 +6,20 @@ const Statistics = ({good, neutral, bad}) => {
     const avg = (good - bad) / all
     const pos = good / all * 100
 
-    return (
-        <div>
-            <p>good {good}</p>
-            <p>neutral {neutral}</p>
-            <p>bad {bad}</p>
-            <p>all {all}</p>
-            <p>average {all === 0 ? 0 : avg }</p>
-            <p>positive {all === 0 ? 0 : pos}%</p>
-        </div>
-    )
+    if (all === 0) {
+        return ( <p>No feedback given</p>)
+    } else {
+        return (
+            <div>
+                <p>good {good}</p>
+                <p>neutral {neutral}</p>
+                <p>bad {bad}</p>
+                <p>all {all}</p>
+                <p>average {avg}</p>
+                <p>positive {pos}%</p>
+            </div>
+        )
+    }
     
 }
 
