@@ -5,20 +5,42 @@ const App = (props) => {
     const [selected, setSelected] = useState(0)
     const [points, setPoints] = useState(new Array(props.anecdotes.length).fill(0))
 
-    const vote = () => {
+    const addVote = () => {
         const pc = [...points]
         pc[selected] += 1
         setPoints(pc)
     }
 
-    const newSelection = () => setSelected(Math.floor(Math.random() * 6))
+    const newSelection = () => {
+        while (true) {
+            const newSel = Math.floor(Math.random() * 6)
+            if (newSel !== selected){
+                setSelected(newSel)
+                break
+            }
+        }
+    }
+
+    const mostVoted = () => {
+        let max = 0
+        for (let i = 0; i < points.length; i++){
+            if (points[i] > points[max]) {
+                max = i
+            }
+        }
+        return max
+    }
 
     return (
         <div>
+            <h2>Anecdote of the Day</h2>
             <p>{props.anecdotes[selected]}</p>
             <p>has {points[selected]} votes</p>
-            <button onClick={() => vote()}>vote</button>
+            <button onClick={() => addVote()}>vote</button>
             <button onClick={() => newSelection()}>next anecdote</button>
+            <h2>Anecdote with most votes</h2>
+            <p>{props.anecdotes[mostVoted()]}</p>
+            <p>has {points[mostVoted()]} votes</p>
         </div>
     )
 }
