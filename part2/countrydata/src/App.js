@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import ExpandedCountry from './components/ExpandedCountry'
+import Country from './components/Country'
 
 const App = () => {
     const [countries, setCountries] = useState([])
@@ -24,7 +25,7 @@ const App = () => {
 
             <div style={{display: filteredCountries.length < 11 ? 'block' : 'none'}}>
                 {filteredCountries.length !== 1 
-                    ? filteredCountries.map(country => <p key={country.name}>{country.name}</p>)
+                    ? filteredCountries.map(country => <Country key={country.name} country={country} />)
                     : filteredCountries.map(country => <ExpandedCountry key={country.name} country={country} />)
                 }
             </div>

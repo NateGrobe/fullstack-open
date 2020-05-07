@@ -12,7 +12,7 @@ const ExpandedCountry = ({country}) => {
                 {country.languages.map(lang => <li key={lang.name}>{lang.name}</li>)}
             </ul>
 
-            <img style={{width: '200px', height: '100px'}} src={country.flag} />
+            <img alt='flag img' style={{width: '200px', height: '100px'}} src={country.flag} />
         </div>
     )
 }
