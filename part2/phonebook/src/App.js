@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import axios from 'axios'
 import personServices from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import Persons from './components/Persons'
+import Person from './components/Person'
 
 const App = () => {
     const [persons, setPersons] = useState([])
@@ -39,6 +38,10 @@ const App = () => {
         setNewNumber('')
     }
 
+    const deletePerson = personData => {
+        console.log(personData.name)
+    }
+
     const filteredNames = persons.filter(person => person.name.toUpperCase().includes(filter.toUpperCase()))
     
     const handleNameChange = (event) => setNewName(event.target.value) 
@@ -57,7 +60,7 @@ const App = () => {
             />
 
             <h2>Numbers</h2>
-            <Persons persons={filteredNames} />
+            {filteredNames.map(person => <Person key={person.name} person={person} handleClick={() => deletePerson(person)} />)}
         </div>
     )
 }
