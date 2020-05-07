@@ -39,7 +39,12 @@ const App = () => {
     }
 
     const deletePerson = personData => {
-        console.log(personData.name)
+        const confirm = window.confirm(`Delete ${personData.name}?`)
+        if (confirm) {
+            personServices
+                .remove(personData.id)
+            setPersons(persons.filter(person => person.id !== personData.id))
+        }
     }
 
     const filteredNames = persons.filter(person => person.name.toUpperCase().includes(filter.toUpperCase()))
