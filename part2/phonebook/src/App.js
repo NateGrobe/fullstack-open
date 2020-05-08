@@ -3,12 +3,14 @@ import personServices from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Person from './components/Person'
+import SuccNoti from './components/SuccNoti'
 
 const App = () => {
     const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
     const [filter, setFilter] = useState('')
+    const [succMessage, setSuccMessage] = useState(null)
 
     useEffect(() => {
         personServices
@@ -32,6 +34,10 @@ const App = () => {
                 .create(personObject)
                 .then(newPerson => {
                     setPersons(persons.concat(newPerson))
+                    setSuccMessage(`Added ${newName}`)
+                    setTimeout(() => {
+                        setSuccMessage(null)
+                    }, 5000)
                 })
             setNewName('')
             setNewNumber('')
@@ -45,6 +51,10 @@ const App = () => {
                     .changeNumber(match.id, personObject)
                     .then(changedPerson => {
                         setPersons(persons.map(person => person.id !== match.id ? person : changedPerson))
+                        setSuccMessage(`${newName}'s number has been changed to ${newNumber}`)
+                        setTimeout(() => {
+                            setSuccMessage(null)
+                        }, 5000)
                     })
             }
             setNewName('')
@@ -61,6 +71,10 @@ const App = () => {
         if (confirm) {
             personServices
                 .remove(personData.id)
+            setSuccMessage(`${personData.name} has been removed from the phonebook`)
+            setTimeout(() => {
+                setSuccMessage(null)
+            }, 5000)
             setPersons(persons.filter(person => person.id !== personData.id))
         }
     }
@@ -74,6 +88,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <SuccNoti message={succMessage} />
             <Filter value={filter} onChange={handleFilter} />
 
             <h2>Add a new</h2>
