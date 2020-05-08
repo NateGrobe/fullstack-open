@@ -4,6 +4,7 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Person from './components/Person'
 import SuccNoti from './components/SuccNoti'
+import ErrorNoti from './components/ErrorNoti'
 
 const App = () => {
     const [persons, setPersons] = useState([])
@@ -11,6 +12,7 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('')
     const [filter, setFilter] = useState('')
     const [succMessage, setSuccMessage] = useState(null)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     useEffect(() => {
         personServices
@@ -56,9 +58,17 @@ const App = () => {
                             setSuccMessage(null)
                         }, 5000)
                     })
+                    .catch(error => {
+                        setErrorMessage(
+                            `Information of ${newName} has already been removed from server`
+                        )
+                        setTimeout(() => {
+                            setErrorMessage(null)
+                        }, 5000)
+                    })
+                setNewName('')
+                setNewNumber('')
             }
-            setNewName('')
-            setNewNumber('')
         } else {
             setNewName('')
             setNewNumber('')
@@ -89,6 +99,7 @@ const App = () => {
         <div>
             <h2>Phonebook</h2>
             <SuccNoti message={succMessage} />
+            <ErrorNoti message={errorMessage} />
             <Filter value={filter} onChange={handleFilter} />
 
             <h2>Add a new</h2>
