@@ -4,7 +4,23 @@ const app = express()
 const morgan = require('morgan')
 
 app.use(express.json())
-app.use(morgan('tiny'))
+
+// custom token
+morgan.token('json', (req, res) => {return JSON.stringify(req.body)})
+
+// log tiny if not post
+app.use(morgan('tiny', {
+    skip: (req, res) => {
+        return req.method === 'POST'
+    }
+}))
+
+// log custom if post
+app.use(morgan(':method :url :status :res[content-length] - :total-time ms :json', {
+    skip: (req, res) => {
+        return req.method !== 'POST'
+    }
+}))
 
 let persons = [
     {
