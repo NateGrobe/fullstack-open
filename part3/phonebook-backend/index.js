@@ -1,15 +1,17 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
+const morgan = require('morgan')
+const mongoose = require('mongoose')
+require('dotenv').config()
+const Person = require('./models/person')
+
 app.use(express.json())
 app.use(express.static('build'))
-
-const cors = require('cors')
 app.use(cors())
 
-const morgan = require('morgan')
-
 // custom token
-morgan.token('json', (req, res) => {return JSON.stringify(req.body)})
+morgan.token('json', (req, res) => { return JSON.stringify(req.body) })
 
 // log tiny if not post
 app.use(morgan('tiny', {
@@ -25,6 +27,7 @@ app.use(morgan(':method :url :status :res[content-length] - :total-time ms :json
     }
 }))
 
+/*
 let persons = [
     {
         name: 'Arto Hellas',
@@ -47,13 +50,16 @@ let persons = [
         id: 4
     },
 ]
+*/
 
 const generateId = () => {
     return Math.floor(Math.random() * 1000)
 }
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({}).then(persons => {
+        res.json(persons.map(person => person.toJSON()))
+    })
 })
 
 app.get('/api/persons/:id', (req, res) => {
@@ -93,7 +99,7 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({
             error: 'number missing'
         })
-    }else if (!unique) {
+    } else if (!unique) {
         return res.status(400).json({
             error: 'name must be unique'
         })
@@ -109,7 +115,7 @@ app.post('/api/persons', (req, res) => {
     res.json(person)
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
