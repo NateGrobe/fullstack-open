@@ -63,16 +63,18 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-    if (person)
-        res.json(person)
-    else
-        res.status(404).end()
+    Person.findById(req.params.id).then(person => {
+        res.json(person.toJSON())
+    })
 })
 
 app.get('/info', (req, res) => {
-    res.send(`Phonebook has info for ${persons.length} people <br> ${new Date()}`)
+    Person.countDocuments({}, (err, count) => {
+        if (err)
+            res.send(err.message)
+        else
+            res.send(`Phonebook has info for ${count} people <br> ${new Date()}`)
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -84,7 +86,6 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
     const body = req.body
-    const unique = persons.filter(person => person.name === body.name).length === 0
 
     if (!body.name && !body.number) {
         return res.status(400).json({
@@ -99,20 +100,26 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({
             error: 'number missing'
         })
-    } else if (!unique) {
-        return res.status(400).json({
-            error: 'name must be unique'
-        })
     }
 
-    const person = {
+    Person.countDocuments({ name: body.name }, (err, count) => {
+        if (err)
+            console.log(err.message)
+        else if (count !== 0) {
+            return res.status(400).json({
+                error: 'name must be unique'
+            })
+        }
+    })
+
+    const person = new Person({
         name: body.name,
         number: body.number,
-        id: generateId(),
-    }
+    })
 
-    persons = persons.concat(person)
-    res.json(person)
+    person.save().then(savedNote => {
+        res.json(savedNote.toJSON())
+    })
 })
 
 const PORT = process.env.PORT
