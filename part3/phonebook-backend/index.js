@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
-const mongoose = require('mongoose')
 require('dotenv').config()
 const Person = require('./models/person')
 
@@ -62,7 +61,7 @@ app.delete('/api/persons/:id', (req, res) => {
         .catch(error => next(error))
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
     const body = req.body
 
     if (!body.name && !body.number) {
@@ -80,24 +79,19 @@ app.post('/api/persons', (req, res) => {
         })
     }
 
-    Person.countDocuments({name: body.name}, (err, count) => {
-        if (err)
-            console.log(err.message)
-        else if (count !== 0) {
-            return res.status(400).json({
-                error: 'name must be unique'
-            })
-        }
-    })
-
     const person = new Person({
         name: body.name,
         number: body.number,
     })
 
-    person.save().then(savedPerson => {
-        res.json(savedPerson.toJSON())
-    })
+    person
+        .save()
+        .then(savedPerson => {
+            res.json(savedPerson.toJSON())
+        })
+        .catch(error => {
+            return res.status(400).json({error: 'name must be unique'})
+        })
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
