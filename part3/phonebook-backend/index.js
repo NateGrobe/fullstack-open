@@ -45,6 +45,7 @@ app.get('/api/persons/:id', (req, res, next) => {
 })
 
 app.get('/info', (req, res) => {
+    // not exactly sure if this is correct but it works
     Person.countDocuments({}, (err, count) => {
         if (err)
             res.send(err.message)
