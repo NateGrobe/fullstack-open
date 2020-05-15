@@ -11,7 +11,7 @@ app.use(express.static('build'))
 app.use(cors())
 
 // custom token
-morgan.token('json', (req, res) => { return JSON.stringify(req.body) })
+morgan.token('json', (req, res) => {return JSON.stringify(req.body)})
 
 // log tiny if not post
 app.use(morgan('tiny', {
@@ -49,10 +49,10 @@ app.get('/info', (req, res) => {
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(person => person.id !== id)
-
-    res.status(204).end()
+    Person.findByIdAndRemove(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -73,7 +73,7 @@ app.post('/api/persons', (req, res) => {
         })
     }
 
-    Person.countDocuments({ name: body.name }, (err, count) => {
+    Person.countDocuments({name: body.name}, (err, count) => {
         if (err)
             console.log(err.message)
         else if (count !== 0) {
