@@ -20,7 +20,7 @@ const App = () => {
             .then(initialPersons => {
                 setPersons(initialPersons)
             })
-    },[])
+    }, [])
 
     const addPerson = (event) => {
         event.preventDefault()
@@ -41,11 +41,17 @@ const App = () => {
                         setSuccMessage(null)
                     }, 5000)
                 })
+                .catch(error => {
+                    setErrorMessage(error.response.data.error)
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                    }, 5000)
+                })
             setNewName('')
             setNewNumber('')
         } else if (match.number !== newNumber) {
             const confirmed = window.confirm(
-            `${newName} is already added to the phonebook, replace the old number with a new on ?`
+                `${newName} is already added to the phonebook, replace the old number with a new on ?`
             )
 
             if (confirmed) {
@@ -90,10 +96,10 @@ const App = () => {
     }
 
     const filteredNames = persons.filter(person => person.name.toUpperCase().includes(filter.toUpperCase()))
-    
-    const handleNameChange = (event) => setNewName(event.target.value) 
-    const handleNumberChange = (event) => setNewNumber(event.target.value) 
-    const handleFilter = (event) => setFilter(event.target.value) 
+
+    const handleNameChange = (event) => setNewName(event.target.value)
+    const handleNumberChange = (event) => setNewNumber(event.target.value)
+    const handleFilter = (event) => setFilter(event.target.value)
 
     return (
         <div>
@@ -103,8 +109,8 @@ const App = () => {
             <Filter value={filter} onChange={handleFilter} />
 
             <h2>Add a new</h2>
-            <PersonForm onSubmit={addPerson} 
-                newNameVal={newName} onNameChange={handleNameChange} 
+            <PersonForm onSubmit={addPerson}
+                newNameVal={newName} onNameChange={handleNameChange}
                 newNumVal={newNumber} onNumChange={handleNumberChange}
             />
 
