@@ -11,7 +11,31 @@ const totalLikes = blogs => {
   return blogs.reduce(reducer, 0)
 }
 
+const favouriteBlog = blogs => {
+  let fav
+  let max = 0
+
+  if (blogs.length === 0)
+    return 'There are currently no blog posts'
+
+  blogs.forEach((blog, index) => {
+    if (index === 0)
+      fav = index
+    if (blog.likes > max) {
+      fav = index
+      max = blog.likes
+    }
+  })
+
+  return {
+    title: blogs[fav].title,
+    author: blogs[fav].author,
+    likes: max
+  }
+}
+
 module.exports = {
   dummy,
   totalLikes,
+  favouriteBlog,
 }
