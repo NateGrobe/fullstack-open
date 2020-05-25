@@ -34,8 +34,35 @@ const favouriteBlog = blogs => {
   }
 }
 
+const mostBlogs = blogs => {
+  const authors = []
+
+  if (blogs.length === 0)
+    return 'There are no blogs currently'
+
+  while (blogs.length !== 0) {
+    const currLength = blogs.length
+    let currAuthor = blogs[0].author
+    blogs = blogs.filter(blog => blog.author !== currAuthor)
+    authors.push({
+      author: currAuthor,
+      blogs: currLength - blogs.length,
+    })
+  }
+
+  authors.sort((a, b) => {
+    if (a > b) return -1
+    if (a < b) return 1
+
+    return 0
+  })
+
+  return authors[2]
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favouriteBlog,
+  mostBlogs,
 }
