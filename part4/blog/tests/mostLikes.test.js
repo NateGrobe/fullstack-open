@@ -1,6 +1,6 @@
 const listHelper = require('../utils/list_helper')
 
-describe('highest blog posts', () => {
+describe('most like blog posts', () => {
 
   const listWithNoBlog = []
 
@@ -54,7 +54,7 @@ describe('highest blog posts', () => {
     }
   ]
 
-  const listWithTwoWinners = [ 
+  const listWithTwoHighestLikes = [ 
     { 
       _id: "5a422a851b54a676234d17f7", 
       title: "React patterns", 
@@ -91,30 +91,30 @@ describe('highest blog posts', () => {
       _id: "5a422ba71b54a676234d17fb", 
       title: "TDD harms architecture", 
       author: "Robert C. Martin", url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html", 
-      likes: 0, 
+      likes: 7, 
       __v: 0 
     } 
   ]
 
   test('when there are no blogs', () => {
-    const result = listHelper.mostBlogs(listWithNoBlog)
+    const result = listHelper.mostLikes(listWithNoBlog)
     expect(result).toEqual('There are no blogs currently')
   })
 
   test('when there is a single highest display the author and number of blogs', () => {
-    const result = listHelper.mostBlogs(listWithMultiBlogs)
+    const result = listHelper.mostLikes(listWithMultiBlogs)
     expect(result).toEqual(
-      { author: "Robert C. Martin",
-        blogs: 3
+      { author: "Edsger W. Dijkstra",
+        likes: 17
       }
     )
   })
   
-  test('when there are multiple top bloggers return the first one', () => {
-    const result = listHelper.mostBlogs(listWithTwoWinners)
+  test('when there are multiple top likes return the first one', () => {
+    const result = listHelper.mostLikes(listWithTwoHighestLikes)
     expect(result).toEqual(
       { author: "Edsger W. Dijkstra",
-        blogs: 2
+        likes: 17
       }
     )
   })

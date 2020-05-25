@@ -51,15 +51,16 @@ const mostBlogs = blogs => {
   }
 
   authors.sort((a, b) => {
-    if (a.blogs > b.blogs) return -1
-    if (a.blogs < b.blogs) return 1
+    if (a > b) return -1
+    if (a < b) return 1
 
     return 0
   })
 
-  return authors[0]
+  return authors[2]
 }
 
+// this is inefficent at higher numbers but gets the job done here
 const mostLikes = blogs => {
   const authors = []
 
@@ -67,14 +68,13 @@ const mostLikes = blogs => {
     return 'There are no blogs currently'
 
   blogs.map(blog => {
-    const currentAuthor = authors.filter(author => author.author === blog.author)
-    if (currentAuthor.length === 0) {
+    if (authors.filter(author => author.name !== blog.author)) {
       authors.push({
-        author: blog.author,
+        name: blog.author,
         likes: blog.likes
       })
     } else {
-      currentAuthor[0].likes += blog.likes
+      authors.filter(author => author.name === blog.author).likes += blog.likes
     }
   })
 
@@ -82,6 +82,8 @@ const mostLikes = blogs => {
     if ( a.likes > b.likes) return -1
     if ( a.likes < b.likes) return 1
   })
+
+  console.log(authors)
 
   return authors[0]
 }
