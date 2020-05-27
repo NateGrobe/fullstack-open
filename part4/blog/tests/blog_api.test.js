@@ -65,85 +65,109 @@ beforeEach(async () => {
   }
 })
 
-test('all blogs are returned with get', async () => {
-  const res = await api.get('/api/blogs')
+describe('when there initially blogs saved', () => {
+  test('all blogs are returned with get', async () => {
+    const res = await api.get('/api/blogs')
 
-  expect(res.body).toHaveLength(initialBlogs.length)
+    expect(res.body).toHaveLength(initialBlogs.length)
+  })
+
+  test('verify id exists', async () => {
+    const res = await api.get('/api/blogs')
+    expect(res.body[0].id).toBeDefined()
+  }) 
 })
 
-test('verify id exists', async () => {
-  const res = await api.get('/api/blogs')
-  expect(res.body[0].id).toBeDefined()
+describe('adding blogs', () => {
+  test('a valid blog can be added', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Nate',
+      url: 'http://blog.testblog.com',
+      likes: 0
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const res = await api.get('/api/blogs')
+    const contents = res.body.map(r => r.title)
+
+    expect(res.body).toHaveLength(initialBlogs.length + 1)
+    expect(contents).toContain(
+      'Test Blog'
+    )
+  })
+
+  test('if likes missing default to zero', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Nate',
+      url: 'http://blog.testblog.com',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const res = await api.get('/api/blogs')
+    const addedBlog = res.body.filter(r => r.title === 'Test Blog')[0]
+
+    expect(addedBlog.likes).toEqual(0)
+  })
+
+  test('title and url are missing', async () => {
+    const blogWithNoUrl = {
+      title: 'Test Blog',
+      author: 'Nate',
+      likes: 10,
+    }
+
+    const blogWithNoTitle = {
+      author: 'Nate',
+      url: 'http://blog.testblog.com',
+      likes: 0,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(blogWithNoUrl)
+      .expect(400)
+
+    await api
+      .post('/api/blogs')
+      .send(blogWithNoTitle)
+      .expect(400)
+
+    const res = await api.get('/api/blogs')
+    expect(res.body).toHaveLength(initialBlogs.length)
+  }) 
 })
 
-test('a valid blog can be added', async () => {
-  const newBlog = {
-    title: 'Test Blog',
-    author: 'Nate',
-    url: 'http://blog.testblog.com',
-    likes: 0
-  }
+describe('removing blogs', () => {
+  test('a blog can be deleted', async () => {
+    const res = await api.get('/api/blogs')
+    const blogToDelete = res.body[0]
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
 
-  const res = await api.get('/api/blogs')
-  const contents = res.body.map(r => r.title)
+    const remainingBlogs = await api.get('/api/blogs')
 
-  expect(res.body).toHaveLength(initialBlogs.length + 1)
-  expect(contents).toContain(
-    'Test Blog'
-  )
+    expect(remainingBlogs.body).toHaveLength(initialBlogs.length -1)
+
+    const contents = remainingBlogs.body.map(r => r.title)
+    
+    expect(contents).not.toContain(blogToDelete.title)
+  })
 })
 
-test('if likes missing default to zero', async () => {
-  const newBlog = {
-    title: 'Test Blog',
-    author: 'Nate',
-    url: 'http://blog.testblog.com',
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-
-  const res = await api.get('/api/blogs')
-  const addedBlog = res.body.filter(r => r.title === 'Test Blog')[0]
-
-  expect(addedBlog.likes).toEqual(0)
-})
-
-test('title and url are missing', async () => {
-  const blogWithNoUrl = {
-    title: 'Test Blog',
-    author: 'Nate',
-    likes: 10,
-  }
-
-  const blogWithNoTitle = {
-    author: 'Nate',
-    url: 'http://blog.testblog.com',
-    likes: 0,
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(blogWithNoUrl)
-    .expect(400)
-
-  await api
-    .post('/api/blogs')
-    .send(blogWithNoTitle)
-    .expect(400)
-
-  const res = await api.get('/api/blogs')
-  expect(res.body).toHaveLength(initialBlogs.length)
-})
 
 afterAll(() => {
   mongoose.connection.close()
