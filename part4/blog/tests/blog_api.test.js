@@ -168,6 +168,31 @@ describe('removing blogs', () => {
   })
 })
 
+describe('modifying blog data', () => {
+  test('update the info in the blog post', async () => {
+    const res = await api.get('/api/blogs')
+    const blogToChange = res.body[0]
+
+    const changedBlog = {
+      title: blogToChange.title,
+      author: blogToChange.author,
+      url: blogToChange.url,
+      likes: 100,
+    }
+
+    await api
+      .put(`/api/blogs/${blogToChange.id}`)
+      .send(changedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAfterChanges = await api.get('/api/blogs')
+    const modifiedBlog = blogsAfterChanges.body[0]
+    expect(blogsAfterChanges.body).toHaveLength(initialBlogs.length)
+    expect(modifiedBlog.likes).toEqual(100)
+  })
+})
+
 
 afterAll(() => {
   mongoose.connection.close()
