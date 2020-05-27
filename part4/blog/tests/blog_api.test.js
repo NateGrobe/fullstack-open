@@ -118,6 +118,33 @@ test('if likes missing default to zero', async () => {
   expect(addedBlog.likes).toEqual(0)
 })
 
+test('title and url are missing', async () => {
+  const blogWithNoUrl = {
+    title: 'Test Blog',
+    author: 'Nate',
+    likes: 10,
+  }
+
+  const blogWithNoTitle = {
+    author: 'Nate',
+    url: 'http://blog.testblog.com',
+    likes: 0,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(blogWithNoUrl)
+    .expect(400)
+
+  await api
+    .post('/api/blogs')
+    .send(blogWithNoTitle)
+    .expect(400)
+
+  const res = await api.get('/api/blogs')
+  expect(res.body).toHaveLength(initialBlogs.length)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
