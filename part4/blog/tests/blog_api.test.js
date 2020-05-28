@@ -1,8 +1,10 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 
 const initialBlogs = [ 
@@ -193,6 +195,73 @@ describe('modifying blog data', () => {
   })
 })
 
+describe('adding user data', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('hello', 10)
+    const user = new User ({ username: 'root', name: 'Superuser', passwordHash })
+
+    await user.save()
+  })
+
+  test('with a non-unique username will fail', async () => {
+    const usersBefore = await api.get('/api/users')
+
+    const badUser = {
+      username: 'root',
+      name: 'user',
+      password: 'hello'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(badUser)
+      .expect(400)
+
+    const usersAfter = await api.get('/api/users')
+    expect(usersAfter.body).toHaveLength(usersBefore.body.length)
+    expect(result.body.error).toContain('`username` to be unique')
+  })
+
+  test('with a 2 character or less username will fail', async () => {
+    const usersBefore = await api.get('/api/users')
+
+    const badUser = {
+      username: 'ro',
+      name: 'user',
+      password: 'hello'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(badUser)
+      .expect(400)
+
+    const usersAfter = await api.get('/api/users')
+    expect(usersAfter.body).toHaveLength(usersBefore.body.length)
+    expect(result.body.error).toContain('`username` (`ro`) is shorter than the minimum allowed length (3)')
+  })
+
+  test('with a password shorter than 3 characters will fail', async () => {
+    const usersBefore = await api.get('/api/users')
+
+    const badUser = {
+      username: 'Nate',
+      name: 'Nate Grobe',
+      password: 'iv'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(badUser)
+      .expect(400)
+
+    const usersAfter = await api.get('/api/users')
+    expect(usersAfter.body).toHaveLength(usersBefore.body.length)
+    expect(result.body.error).toContain('password must be at least 3 characters')
+  })
+})
 
 afterAll(() => {
   mongoose.connection.close()
