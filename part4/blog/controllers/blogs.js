@@ -1,23 +1,38 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogRouter.get('/', async (req, res) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({}).populate('user', { username: 1, name: 1 })
   res.json(blogs.map(blog => blog.toJSON()))
 })
 
 blogRouter.post('/', async (req, res) => {
-  const body = new Blog(req.body)
+  const body = req.body
+
+  const user = await User.findById(body.userId)
 
   const blog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
+    user: user._id,
   })
 
   const savedBlog = await blog.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
   res.json(savedBlog.toJSON())
+})
+
+blogRouter.get('/:id', async (req, res) => {
+  const blog = await Blog.findById(req.params.id)
+  if (note)
+    res.json(note.toJSON())
+  else
+    res.status(404).end()
 })
 
 blogRouter.delete('/:id', async (req, res) => {
@@ -34,14 +49,6 @@ blogRouter.put('/:id', async (req, res) => {
     url: body.url,
     likes: body.likes,
   }
-
-  /*
-  Note.findByIdAndUpdate(req.params.id, note, { new: true })
-    .then(updatedNote => {
-      res.json(updatedNote.toJSON())
-    })
-    .catch(error => next(error))
-    */
 
   const changedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
   res.json(changedBlog.toJSON())
