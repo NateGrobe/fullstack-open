@@ -6,6 +6,7 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+const badToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjVlZDdlY2Q2OGZmNjA4Nzg0NzQ5ZWVmZiIsImlhdCI6MTU5MTIwOTcxMn0.BPfi5a2oG87wgUsRuc7sxS1HPJiftW4A0Bp2-bdTXLI'
 
 const initialBlogs = [ 
   { 
@@ -57,14 +58,35 @@ const initialBlogs = [
   }
 ]
 
+let token
+
 // add test entries to db
-beforeEach(async () => {
+beforeEach(async (done) => {
   await Blog.deleteMany({})
   
   for (let blog of initialBlogs) {
     let blogObject = new Blog(blog)
     await blogObject.save()
   }
+
+
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('test', 10)
+
+  const user = new User({
+    username: 'test',
+    passwordHash,
+  })
+
+  await user.save()
+
+  api
+    .post('/api/login')
+    .send({ username: 'test', password: 'test' })
+    .end((error, res) => {
+      token = res.body.token
+      done()
+    })
 })
 
 describe('when there initially blogs saved', () => {
@@ -91,6 +113,7 @@ describe('adding blogs', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -113,6 +136,7 @@ describe('adding blogs', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -138,17 +162,35 @@ describe('adding blogs', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(blogWithNoUrl)
       .expect(400)
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(blogWithNoTitle)
       .expect(400)
 
     const res = await api.get('/api/blogs')
     expect(res.body).toHaveLength(initialBlogs.length)
   }) 
+
+  test('if token is invalid fail and return 401', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Nate',
+      url: 'http://blog.testblog.com',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+
+    const res = await api.get('/api/blogs')
+    expect(res.body).toHaveLength(initialBlogs.length)
+  })
 })
 
 describe('removing blogs', () => {
