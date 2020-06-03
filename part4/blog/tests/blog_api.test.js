@@ -200,6 +200,7 @@ describe('removing blogs', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
 
     const remainingBlogs = await api.get('/api/blogs')
