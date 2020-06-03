@@ -9,16 +9,6 @@ blogRouter.get('/', async (req, res) => {
   res.json(blogs.map(blog => blog.toJSON()))
 })
 
-/*
-const getTokenFrom = req => {
-  const authorization = req.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer '))
-    return authorization.substring(7)
-
-  return null
-}
-*/
-
 blogRouter.post('/', async (req, res) => {
   const body = req.body
   const token = req.token
@@ -52,9 +42,22 @@ blogRouter.get('/:id', async (req, res) => {
 })
 
 blogRouter.delete('/:id', async (req, res) => {
-  await Blog.findByIdAndRemove(req.params.id)
-  res.status(204).end()
+  const token = req.token
+  const userId = req.body.userId
+  const blog = await Blog.findById(req.path.substring(1))
+
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!token || !decodedToken.id)
+    return res.status(401).json({ error: 'token missing or invalid' })
+
+  if (blog.user.toString() === userId.toString()) {
+    await Blog.findByIdAndRemove(req.params.id)
+    res.status(204).end()
+  } else {
+    return res.status(401).json({ error: 'only creator can delete blog' })
+  }
 })
+
 
 blogRouter.put('/:id', async (req, res) => {
   const body = req.body
