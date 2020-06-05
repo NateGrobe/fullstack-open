@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
+
 import Blog from './components/Blog'
+import ErrorNoti from './components/ErrorNoti'
+import SuccNoti from './components/SuccNoti'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -12,6 +15,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [succMessage, setSuccMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -41,8 +46,15 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setSuccMessage('Welcome!')
+      setTimeout(() => {
+        setSuccMessage(null)
+      }, 5000)
     } catch (exception) {
-      console.log('wrong credentials')
+      setErrorMessage('wrong username or password')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
@@ -58,11 +70,22 @@ const App = () => {
       .createBlog(newBlog)
       .then(nb => {
         setBlogs(blogs.concat(nb))
+        setSuccMessage(
+          `a new blog ${title} by ${author} added`
+        )
+        setTimeout(() => {
+          setSuccMessage(null)
+        }, 5000)
+        setTitle('')
+        setAuthor('')
+        setUrl('')
       })
-
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+      .catch(error => {
+        setErrorMessage('failed to add blog')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
   }
 
   const loginForm = () => {
@@ -133,6 +156,8 @@ const App = () => {
 
   return (
     <div>
+      <ErrorNoti message={errorMessage} />
+      <SuccNoti message={succMessage} />
       {user === null && loginForm()}
 
       {user !== null &&
