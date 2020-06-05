@@ -9,6 +9,9 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -34,12 +37,32 @@ const App = () => {
       window.localStorage.setItem(
         'loggedUser', JSON.stringify(user)
       )
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
       console.log('wrong credentials')
     }
+  }
+
+  const addBlog = event => {
+    event.preventDefault()
+    const newBlog = {
+      title: title,
+      author: author,
+      url: url
+    }
+
+    blogService
+      .createBlog(newBlog)
+      .then(nb => {
+        setBlogs(blogs.concat(nb))
+      })
+
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   const loginForm = () => {
@@ -71,6 +94,43 @@ const App = () => {
     )
   }
 
+  const blogForm = () => {
+    return (
+      <div>
+        <form onSubmit={addBlog}>
+          <div>
+            title:
+            <input
+              type='text'
+              value={title}
+              name='Title'
+              onChange={({ target }) => setTitle(target.value)}
+            />
+          </div>
+          <div>
+            author:
+            <input
+              type='text'
+              value={author}
+              name='Author'
+              onChange={({ target }) => setAuthor(target.value)}
+            />
+          </div>
+          <div>
+            url:
+            <input
+              type='text'
+              value={url}
+              name='URL'
+              onChange={({ target }) => setUrl(target.value)}
+            />
+          </div>
+          <button type='submit'>create</button>
+        </form>
+      </div>
+    )
+  }
+
   return (
     <div>
       {user === null && loginForm()}
@@ -82,6 +142,8 @@ const App = () => {
           <button onClick={() => window.localStorage.removeItem('loggedUser')}>logout</button>
           <br />
           <br />
+          <h3>create new</h3>
+          {blogForm()}
           {blogs.map(blog => 
             <Blog key={blog.id} blog={blog} />
           )}
