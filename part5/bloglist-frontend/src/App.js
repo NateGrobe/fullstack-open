@@ -4,6 +4,7 @@ import Blog from './components/Blog'
 import ErrorNoti from './components/ErrorNoti'
 import SuccNoti from './components/SuccNoti'
 import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -13,9 +14,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [succMessage, setSuccMessage] = useState(null)
 
@@ -59,30 +57,19 @@ const App = () => {
     }
   }
 
-  const addBlog = event => {
-    event.preventDefault()
+  const addBlog = blogObj => {
 
     blogFormRef.current.toggleVisiblity()
-
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url
-    }
-
     blogService
-      .createBlog(newBlog)
+      .createBlog(blogObj)
       .then(nb => {
         setBlogs(blogs.concat(nb))
         setSuccMessage(
-          `a new blog ${title} by ${author} added`
+          `a new blog ${nb.title} by ${nb.author} added`
         )
         setTimeout(() => {
           setSuccMessage(null)
         }, 5000)
-        setTitle('')
-        setAuthor('')
-        setUrl('')
       })
       .catch(error => {
         setErrorMessage('failed to add blog')
@@ -126,38 +113,7 @@ const App = () => {
   const blogForm = () => {
     return (
       <Togglable buttonLabel='Add Blog' ref={blogFormRef}>
-        <div>
-          <form onSubmit={addBlog}>
-            <div>
-              title:
-              <input
-                type='text'
-                value={title}
-                name='Title'
-                onChange={({ target }) => setTitle(target.value)}
-              />
-            </div>
-            <div>
-              author:
-              <input
-                type='text'
-                value={author}
-                name='Author'
-                onChange={({ target }) => setAuthor(target.value)}
-              />
-            </div>
-            <div>
-              url:
-              <input
-                type='text'
-                value={url}
-                name='URL'
-                onChange={({ target }) => setUrl(target.value)}
-              />
-            </div>
-            <button type='submit'>create</button>
-          </form>
-        </div>
+        <BlogForm createBlog={addBlog} />
       </Togglable>
     )
   }
