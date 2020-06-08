@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+import blogService from '../services/blogs'
+
 const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
@@ -9,6 +11,22 @@ const Blog = ({ blog }) => {
   }
 
   const [view, setView] = useState(false)
+  const [likes, setLikes] = useState(blog.likes)
+
+  const addLike = () => {
+    const blogObj = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+    }
+
+    blogService
+      .updateLikes(blog.id, blogObj)
+      .then(rb => {
+        setLikes(rb.likes)
+      })
+  }
 
   const unexpanded = () => {
     return (
@@ -25,7 +43,7 @@ const Blog = ({ blog }) => {
         <p>{blog.title}<button onClick={() => setView(!view)}>hide</button></p>
         
         <p>{blog.url}</p>
-        <p>{blog.likes}<button>like</button></p>
+        <p>{likes}<button onClick={addLike}>like</button></p>
         <p>{blog.author}</p>
       </div>
     )
