@@ -20,7 +20,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs.sort((a, b) => { return b.likes - a.likes }))
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -76,6 +76,7 @@ const App = () => {
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
+        console.log(error.message)
       })
   }
 
@@ -94,8 +95,8 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-            <input 
-              type='text' 
+            <input
+              type='text'
               value={username}
               name='Username'
               onChange={({ target }) => setUsername(target.value)}
@@ -103,8 +104,8 @@ const App = () => {
           </div>
           <div>
             password
-            <input 
-              type='password' 
+            <input
+              type='password'
               value={password}
               name='Password'
               onChange={({ target }) => setPassword(target.value)}
@@ -142,7 +143,7 @@ const App = () => {
           <br />
           <h3>create new</h3>
           {blogForm()}
-          {blogs.map(blog => 
+          {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} removeBlog={removeBlog} />
           )}
         </div>}

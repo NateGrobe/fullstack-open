@@ -51,8 +51,8 @@ const Blog = ({ blog, removeBlog }) => {
 
   return (
     <div style={blogStyle}>
-      {view === false && unexpanded()} 
-      {view === true && expanded()} 
+      {view === false && unexpanded()}
+      {view === true && expanded()}
     </div>
   )
 }
