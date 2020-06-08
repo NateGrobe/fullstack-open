@@ -79,6 +79,14 @@ const App = () => {
       })
   }
 
+  const removeBlog = (id, title) => {
+    window.confirm(`Remove ${title}`)
+    blogService
+      .deleteBlog(id, user.id)
+
+    setBlogs(blogs.filter(blog => blog.id !== id))
+  }
+
   const loginForm = () => {
     return (
       <div>
@@ -135,7 +143,7 @@ const App = () => {
           <h3>create new</h3>
           {blogForm()}
           {blogs.map(blog => 
-            <Blog key={blog.id} blog={blog} user={user} />
+            <Blog key={blog.id} blog={blog} removeBlog={removeBlog} />
           )}
         </div>}
     </div>

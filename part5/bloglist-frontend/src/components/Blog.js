@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog, removeBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -37,12 +37,6 @@ const Blog = ({ blog, user }) => {
     )
   }
 
-  const removeBlog = () => {
-    console.log(user)
-    blogService
-      .deleteBlog(blog.id, user.id)
-  }
-
   const expanded = () => {
     return (
       <div>
@@ -50,7 +44,7 @@ const Blog = ({ blog, user }) => {
         <p>{blog.url}</p>
         <p>{likes}<button onClick={addLike}>like</button></p>
         <p>{blog.author}</p>
-        <button onClick={removeBlog}>remove</button>
+        <button onClick={() => removeBlog(blog.id, blog.title)}>remove</button>
       </div>
     )
   }
