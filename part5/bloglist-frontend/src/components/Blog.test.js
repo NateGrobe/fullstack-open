@@ -1,5 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
+
 import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
 
@@ -43,13 +44,11 @@ describe('<Blog />', () => {
     const viewButton = component.getByText('view')
 
     fireEvent.click(viewButton)
-    component.debug()
 
     const likeButton = component.getByText('like')
     fireEvent.click(likeButton)
     fireEvent.click(likeButton)
 
     expect(mockHandler.mock.calls).toHaveLength(2)
-
   })
 })
