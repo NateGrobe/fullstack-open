@@ -39,10 +39,10 @@ const Blog = ({ blog, removeBlog }) => {
 
   const expanded = () => {
     return (
-      <div>
+      <div className='expanded-div'>
         <p>{blog.title}<button onClick={() => setView(!view)}>hide</button></p>
         <p>{blog.url}</p>
-        <p>{likes}<button onClick={addLike}>like</button></p>
+        <p className='likes'>{likes}<button onClick={addLike}>like</button></p>
         <p>{blog.author}</p>
         <button onClick={() => removeBlog(blog.id, blog.title)}>remove</button>
       </div>
