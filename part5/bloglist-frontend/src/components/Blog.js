@@ -30,7 +30,7 @@ const Blog = ({ blog, removeBlog }) => {
 
   const unexpanded = () => {
     return (
-      <div>
+      <div className='unexpanded-div'>
         {blog.title} {blog.author}
         <button onClick={() => setView(!view)}>view</button>
       </div>
