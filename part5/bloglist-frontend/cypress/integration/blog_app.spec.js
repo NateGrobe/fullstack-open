@@ -106,5 +106,29 @@ describe('Blog app', function() {
 
       cy.contains('cypress test blog')
     })
+
+    it('Blogs are ordered from greatest to least likes', function() {
+      for(let i = 0; i < 3; i++) {
+        const title = `test blog ${i+1}`
+        cy.contains('Add Blog').click()
+        cy.get('#title').type(title)
+        cy.get('#author').type('Nate Grobe')
+        cy.get('#url').type('www.test.ca')
+        cy.get('#create-button').click()
+
+        cy.get(`#${i}`).as('currentBlog')
+        cy.get('@currentBlog').contains('view').click()
+
+        for(let j = 0; j < i+1; j++) {
+          cy.get('@currentBlog').contains('like').click()
+        }
+      }
+
+      cy.reload()
+      cy.contains('test blog 3').parent().parent().as('blogParent')
+
+      cy.get('@blogParent').children().first().contains('test blog 3')
+      cy.get('@blogParent').children().last().contains('test blog 1')
+    })
   })
 })

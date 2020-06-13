@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, removeBlog, testLikes }) => {
+const Blog = ({ blog, removeBlog, testLikes, index }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,7 +18,7 @@ const Blog = ({ blog, removeBlog, testLikes }) => {
       title: blog.title,
       author: blog.author,
       url: blog.url,
-      likes: blog.likes + 1,
+      likes: likes + 1,
     }
 
     blogService
@@ -50,7 +50,7 @@ const Blog = ({ blog, removeBlog, testLikes }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div id={index} style={blogStyle}>
       {view === false && unexpanded()}
       {view === true && expanded()}
     </div>
