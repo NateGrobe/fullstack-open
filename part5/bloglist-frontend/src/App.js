@@ -84,8 +84,12 @@ const App = () => {
     window.confirm(`Remove ${title}`)
     blogService
       .deleteBlog(id, user.id)
-
-    setBlogs(blogs.filter(blog => blog.id !== id))
+      .then(res => {
+        setBlogs(blogs.filter(blog => blog.id !== id))
+      })
+      .catch(err => {
+        console.log(err.message)
+      })
   }
 
   const loginForm = () => {

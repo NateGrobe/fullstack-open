@@ -2,13 +2,20 @@ describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
 
-    const user = {
+    const user1 = {
       username: 'nategg',
       name: 'Nate Grobe',
       password: 'testing'
     }
 
-    cy.request('POST', 'http://localhost:3003/api/users', user)
+    const user2 = {
+      username: 'nateg',
+      name: 'Nate Gro',
+      password: 'testing'
+    }
+
+    cy.request('POST', 'http://localhost:3003/api/users', user1)
+    cy.request('POST', 'http://localhost:3003/api/users', user2)
     cy.visit('http://localhost:3000')
   })
 
@@ -53,6 +60,51 @@ describe('Blog app', function() {
       cy.get('#create-button').click()
 
       cy.contains('cypress test blog Tester')
+    })
+
+    it('A blog can be liked', function() {
+      cy.contains('Add Blog').click()
+      cy.get('#title').type('cypress test blog')
+      cy.get('#author').type('Tester')
+      cy.get('#url').type('www.test.ca')
+      cy.get('#create-button').click()
+      cy.contains('view').click()
+
+      cy.get('.likes').contains(0)
+      cy.contains('like').click()
+      cy.get('.likes').contains(1)
+    })
+
+    it('A blog can be deleted by its creator', function() {
+      cy.contains('Add Blog').click()
+      cy.get('#title').type('cypress test blog')
+      cy.get('#author').type('Nate Grobe')
+      cy.get('#url').type('www.test.ca')
+      cy.get('#create-button').click()
+      cy.contains('view').click()
+
+      cy.contains('remove').click()
+      cy.get('html').should('not.contain', 'cypress test blog')
+    })
+
+    it('A blog can\'t be deleted by someone who is not its creator', function() {
+      cy.contains('Add Blog').click()
+      cy.get('#title').type('cypress test blog')
+      cy.get('#author').type('Nate Grobe')
+      cy.get('#url').type('www.test.ca')
+      cy.get('#create-button').click()
+
+      cy.contains('logout').click()
+      cy.reload()
+
+      cy.get('#username').type('nateg')
+      cy.get('#password').type('testing')
+      cy.contains('login').click()
+
+      cy.contains('view').click()
+      cy.contains('remove').click()
+
+      cy.contains('cypress test blog')
     })
   })
 })
