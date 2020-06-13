@@ -36,4 +36,23 @@ describe('Blog app', function() {
         .should('have.css', 'border-style', 'solid')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.get('#username').type('nategg')
+      cy.get('#password').type('testing')
+      cy.get('#login-button').click()
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('Add Blog').click()
+      cy.get('#title').type('cypress test blog')
+      cy.get('#author').type('Tester')
+      cy.get('#url').type('www.test.ca')
+
+      cy.get('#create-button').click()
+
+      cy.contains('cypress test blog Tester')
+    })
+  })
 })
