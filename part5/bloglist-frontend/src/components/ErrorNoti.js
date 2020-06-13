@@ -15,7 +15,7 @@ const ErrorNoti = ({ message }) => {
     return null
 
   return (
-    <div style={styles}>
+    <div id='error' style={styles}>
       {message}
     </div>
   )
