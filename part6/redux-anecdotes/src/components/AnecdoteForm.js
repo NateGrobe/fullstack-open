@@ -17,7 +17,6 @@ const AnecdoteForm = () => {
     setTimeout(() => {
       dispatch(removeNotification())
     }, 5000)
-
   }
 
   return (
