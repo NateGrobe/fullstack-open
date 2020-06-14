@@ -5,7 +5,13 @@ import { addVote } from '../reducers/anecdoteReducer'
 import { setNotification, removeNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(state => state.anecdotes)
+  const anecdotes = useSelector(({ anecdotes, filter }) => {
+    if (filter === '')
+      return anecdotes
+
+    return anecdotes.filter(a => a.content.toLowerCase().includes(filter.toLowerCase()))
+  })
+
   const dispatch = useDispatch()
 
   const vote = id => {
@@ -17,7 +23,7 @@ const AnecdoteList = () => {
       dispatch(removeNotification())
     }, 5000)
   }
-  
+
   return (
     <div>
       {anecdotes.map(anecdote =>
