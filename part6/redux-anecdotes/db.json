@@ -39,6 +39,11 @@
       "content": "another test anecdote",
       "id": "80928",
       "likes": 0
+    },
+    {
+      "content": "testing",
+      "id": "62870",
+      "likes": 0
     }
   ]
 }
