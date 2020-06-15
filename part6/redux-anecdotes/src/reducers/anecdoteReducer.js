@@ -3,7 +3,7 @@ import anecdoteService from '../services/anecdotes'
 const anecdoteReducer = (state = [], action) => {
   switch(action.type) {
     case 'INIT': 
-      return action.data
+      return action.data.sort((a, b) => b.votes - a.votes)
     
     case 'VOTE': {
       const votedA = action.data
