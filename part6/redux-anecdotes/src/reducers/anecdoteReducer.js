@@ -2,9 +2,9 @@ import anecdoteService from '../services/anecdotes'
 
 const anecdoteReducer = (state = [], action) => {
   switch(action.type) {
-    case 'INIT': {
+    case 'INIT': 
       return action.data
-    }
+    
     case 'VOTE': {
       const votedA = action.data
       const id = votedA.id
