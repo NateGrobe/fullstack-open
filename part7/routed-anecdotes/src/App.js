@@ -1,11 +1,8 @@
 import React, { useState } from 'react'
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
-  useParams,
-  useHistory,
   useRouteMatch
 }
 from 'react-router-dom'
@@ -63,6 +60,13 @@ const App = () => {
     ? anecdotes.find(a => a.id === match.params.id)
     : null
 
+  const createNotification = content => {
+    setNotification(`a new anecdote ${content} created!`)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
+  }
+
   return (
     <div>
 
@@ -73,9 +77,11 @@ const App = () => {
         <Link style={padding} to='/about'>about</Link>
       </div>
 
+      {notification}
+
       <Switch>
         <Route path='/create'>
-          <CreateNew addNew={addNew} />
+          <CreateNew addNew={addNew} createNotification={createNotification} />
         </Route>
         <Route path='/about'>
           <About />
