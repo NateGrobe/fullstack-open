@@ -29,6 +29,13 @@ const CreateNew = (props) => {
     props.createNotification(content.value)
   }
 
+  const clearFields = event => {
+    event.preventDefault()
+    content.clear()
+    author.clear()
+    info.clear()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
@@ -46,6 +53,7 @@ const CreateNew = (props) => {
           <input {...info} />
         </div>
         <button>create</button>
+        <button onClick={clearFields}>reset</button>
       </form>
     </div>
   )
