@@ -2,8 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 const AnecdoteList = ({anecdotes}) => {
-  return (
-
+  return ( 
     <div>
       <h2>Anecdotes</h2>
       <ul>

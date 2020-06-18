@@ -1,15 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { useField } from '../hooks'
 
 const CreateNew = (props) => {
-  /*
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
-  */
-
   const content = useField('text')
   const author = useField('text')
   const info = useField('text')
@@ -31,9 +25,9 @@ const CreateNew = (props) => {
 
   const clearFields = event => {
     event.preventDefault()
-    content.clear()
-    author.clear()
-    info.clear()
+    content.onChange('reset')
+    author.onChange('reset')
+    info.onChange('reset') 
   }
 
   return (
