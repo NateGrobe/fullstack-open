@@ -84,10 +84,11 @@ blogRouter.get('/:id/comments', async (req, res) => {
 
 blogRouter.post('/:id/comments', async (req, res) => {
   const body = req.body
+  console.log(body)
   const blog = await Blog.findById(req.params.id)
   blog.comments = blog.comments.concat(body.comment)
   await blog.save()
-  res.json(blog.comments)
+  res.json(blog)
 })
 
 module.exports = blogRouter

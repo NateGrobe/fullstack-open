@@ -18,6 +18,13 @@ const blogReducer = (state = [], action) => {
       return blogs.sort((a, b) => b.likes - a.likes)
     }
 
+    case 'ADD_COMMENT': {
+      const commentedBlog = action.commentedBlog
+      const id = commentedBlog.id
+      const blogs = state.map(blog => blog.id === id ? commentedBlog : blog)
+      return blogs.sort((a, b) => b.likes - a.likes)
+    }
+
     default:
       return state
   }
@@ -59,6 +66,16 @@ export const likeBlog = (id, obj) => {
     dispatch({
       type: 'LIKE',
       votedBlog
+    })
+  }
+}
+
+export const commentOnBlog = (id, comment) => {
+  return async dispatch => {
+    const commentedBlog = await blogService.addComment(id, comment)
+    dispatch({
+      type: 'ADD_COMMENT',
+      commentedBlog
     })
   }
 }

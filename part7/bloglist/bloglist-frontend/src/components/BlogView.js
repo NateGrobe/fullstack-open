@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { likeBlog } from '../reducers/blogReducer'
+import { updateComment, clearComment } from '../reducers/commentFormReducer'
+import { commentOnBlog } from '../reducers/blogReducer'
 
 const BlogView = (props) => {
   const id = useParams().id
@@ -18,6 +20,25 @@ const BlogView = (props) => {
     props.likeBlog(id, blogObj)
   }
 
+  const addComment = event => {
+    event.preventDefault()
+    props.commentOnBlog(id, props.comment)
+    props.clearComment()
+  }
+
+  const commentForm = () => {
+    return (
+      <form onSubmit={addComment}>
+        <input
+          type='text'
+          value={props.comment}
+          onChange={({ target }) => props.updateComment(target.value)}
+        />
+        <button type='submit'>add comment</button>
+      </form>
+    )
+  }
+
   if(!blog) return null
 
   return (
@@ -28,6 +49,7 @@ const BlogView = (props) => {
       <p>added by {blog.author}</p>
 
       <h3>comments:</h3>
+      {commentForm()}
       <ul>
         {blog.comments.map((c, i) =>
           <li key={i}>{c}</li>
@@ -39,12 +61,16 @@ const BlogView = (props) => {
 
 const mapStateToProps = state => {
   return {
-    blogs: state.blogs
+    blogs: state.blogs,
+    comment: state.comment
   }
 }
 
 const mapDispatchToProps = {
-  likeBlog
+  likeBlog,
+  updateComment,
+  clearComment,
+  commentOnBlog
 }
 
 export default connect(

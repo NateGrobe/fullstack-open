@@ -8,6 +8,7 @@ import loginReducer from './reducers/loginReducer'
 import notificationReducer from './reducers/notificationReducer'
 import blogFormReducer from './reducers/blogFormReducer'
 import usersReducer from './reducers/usersReducer'
+import commentFormReducer from './reducers/commentFormReducer'
 
 const reducer = combineReducers({
   blogs: blogReducer,
@@ -15,7 +16,8 @@ const reducer = combineReducers({
   login: loginReducer,
   notification: notificationReducer,
   blogForm: blogFormReducer,
-  users: usersReducer
+  users: usersReducer,
+  comment: commentFormReducer
 })
 
 const store = createStore(
