@@ -19,13 +19,20 @@ const BlogView = (props) => {
   }
 
   if(!blog) return null
-  
+
   return (
     <div>
       <h2>{blog.title}</h2>
-      <a href={blog.url}>{blog.url}</a>
+      <a href={`https://${blog.url}`}>{blog.url}</a>
       <p>{blog.likes} likes <button onClick={addLike}>like</button></p>
       <p>added by {blog.author}</p>
+
+      <h3>comments:</h3>
+      <ul>
+        {blog.comments.map((c, i) =>
+          <li key={i}>{c}</li>
+        )}
+      </ul>
     </div>
   )
 }

@@ -35,8 +35,8 @@ blogRouter.post('/', async (req, res) => {
 
 blogRouter.get('/:id', async (req, res) => {
   const blog = await Blog.findById(req.params.id)
-  if (note)
-    res.json(note.toJSON())
+  if (blog)
+    res.json(blog.toJSON())
   else
     res.status(404).end()
 })
@@ -72,6 +72,22 @@ blogRouter.put('/:id', async (req, res) => {
 
   const changedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
   res.json(changedBlog.toJSON())
+})
+
+blogRouter.get('/:id/comments', async (req, res) => {
+  const blog = await Blog.findById(req.params.id)
+  if(blog)
+    res.json(blog.comments)
+  else
+    res.status(401).end()
+})
+
+blogRouter.post('/:id/comments', async (req, res) => {
+  const body = req.body
+  const blog = await Blog.findById(req.params.id)
+  blog.comments = blog.comments.concat(body.comment)
+  await blog.save()
+  res.json(blog.comments)
 })
 
 module.exports = blogRouter
