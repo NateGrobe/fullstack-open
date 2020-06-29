@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import { Link, Switch, Route } from 'react-router-dom'
+
 
 // reducers
 import {
@@ -23,6 +25,7 @@ import ErrorNoti from './components/ErrorNoti'
 import SuccNoti from './components/SuccNoti'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
+import Users from './components/Users'
 
 import loginService from './services/login'
 
@@ -73,7 +76,7 @@ const App = (props) => {
     if (window.confirm(`Remove ${title}`)) {
       await props.removeBlog(id, props.user.id)
 
-      const validBlog = props.user.blogs.find(blogId => 
+      const validBlog = props.user.blogs.find(blogId =>
         blogId === id
       )
 
@@ -127,35 +130,60 @@ const App = (props) => {
     )
   }
 
+  const linkPadding = {
+    padding: 5
+  }
 
   return (
     <div>
+      {props.user &&
+        <div className='nav'>
+          <Link style={linkPadding} to='/'>Home</Link>
+          <Link style={linkPadding} to='/users'>Users</Link>
+        </div>
+      }
+
       <ErrorNoti message={errorMessage} />
       <SuccNoti message={successMessage} />
-      {props.user === null && loginForm()}
 
       {props.user !== null &&
-        <div>
-          <h2>blogs</h2>
-          {props.user.name} logged in
-          <button onClick={handleLogout}>
-            logout
-          </button>
-          <br />
-          <br />
-          <h3>create new</h3>
-          {blogForm()}
-          <div>
-            {props.blogs.map((blog, index) =>
-              <Blog
-                key={blog.id}
-                blog={blog}
-                removeBlog={removeBlog}
-                index={index}
-              />
-            )}
-          </div>
-        </div>}
+      <div>
+        <h2>blogs</h2>
+        {props.user.name} logged in
+        <br />
+        <br />
+        <button onClick={handleLogout}>
+                logout
+        </button>
+        <br />
+        <br />
+      </div>
+      }
+
+      <Switch>
+        <Route path='/users'>
+          <Users />
+        </Route>
+        <Route path='/'>
+          {props.user === null && loginForm()}
+
+          {props.user !== null &&
+            <div>
+              <h3>create new</h3>
+              {blogForm()}
+              <div>
+                {props.blogs.map((blog, index) =>
+                  <Blog
+                    key={blog.id}
+                    blog={blog}
+                    removeBlog={removeBlog}
+                    index={index}
+                  />
+                )}
+              </div>
+            </div>}
+        </Route>
+      </Switch>
     </div>
   )
 }

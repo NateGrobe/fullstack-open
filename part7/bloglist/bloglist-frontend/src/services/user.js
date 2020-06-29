@@ -6,4 +6,9 @@ const getUserBlogs = async id => {
   return res.data.blogs
 }
 
-export default { getUserBlogs }
+const getAllUsers = async () => {
+  const res = await axios.get(baseUrl)
+  return res.data
+}
+
+export default { getUserBlogs, getAllUsers }
