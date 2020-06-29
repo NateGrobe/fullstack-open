@@ -143,6 +143,10 @@ const App = (props) => {
           <div className='nav'>
             <Link style={linkPadding} to='/'>Blogs</Link>
             <Link style={linkPadding} to='/users'>Users</Link>
+            {props.user.name} logged in
+            <button onClick={handleLogout}>
+              logout
+            </button>
           </div>
       }
 
@@ -151,15 +155,7 @@ const App = (props) => {
 
       {props.user !== null &&
         <div>
-          <h2>blogs</h2>
-          {props.user.name} logged in
-          <br />
-          <br />
-          <button onClick={handleLogout}>
-            logout
-          </button>
-          <br />
-          <br />
+          <h2>Blog App</h2>
         </div>
       }
 
