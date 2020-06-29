@@ -26,6 +26,7 @@ import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import Users from './components/Users'
 import User from './components/User'
+import BlogView from './components/BlogView'
 
 import loginService from './services/login'
 
@@ -74,13 +75,15 @@ const App = (props) => {
 
   const removeBlog = async (id, title) => {
     if (window.confirm(`Remove ${title}`)) {
-      await props.removeBlog(id, props.user.id)
+      if(props.user.blogs.length === 0)
+        props.setErrorNotification('Only a blogs author can remove it')
 
       const validBlog = props.user.blogs.find(blogId =>
         blogId === id
       )
 
       if(validBlog) {
+        await props.removeBlog(id, props.user.id)
         props.updateUserBlogs(props.user.id)
         props.setSuccNotification(`${title} has been removed`)
       }
@@ -138,7 +141,7 @@ const App = (props) => {
     <div>
       {props.user &&
           <div className='nav'>
-            <Link style={linkPadding} to='/'>Home</Link>
+            <Link style={linkPadding} to='/'>Blogs</Link>
             <Link style={linkPadding} to='/users'>Users</Link>
           </div>
       }
@@ -153,7 +156,7 @@ const App = (props) => {
           <br />
           <br />
           <button onClick={handleLogout}>
-                  logout
+            logout
           </button>
           <br />
           <br />
@@ -163,6 +166,9 @@ const App = (props) => {
       <Switch>
         <Route path='/users/:id'>
           <User />
+        </Route>
+        <Route path='/blogs/:id'>
+          <BlogView />
         </Route>
         <Route path='/users'>
           <Users />
