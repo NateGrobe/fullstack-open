@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Link, Switch, Route } from 'react-router-dom'
+import { Link, Switch, Route, useHistory } from 'react-router-dom'
 
 // reducers
 import {
@@ -18,6 +18,17 @@ import {
   setSuccNotification,
   setErrorNotification,
 } from './reducers/notificationReducer'
+import {
+  Container,
+  Toolbar,
+  AppBar,
+  Button,
+  Avatar,
+  TextField,
+  Typography
+} from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+
 
 import Blog from './components/Blog'
 import ErrorNoti from './components/ErrorNoti'
@@ -33,6 +44,8 @@ import loginService from './services/login'
 const App = (props) => {
   const { username, password } = props.login
   const { successMessage, errorMessage } = props.notification
+
+  const history = useHistory()
 
   useEffect(() => {
     props.initializeBlogs()
@@ -65,6 +78,7 @@ const App = (props) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedUser')
     props.clearUser()
+    history.push('/')
   }
 
   const addBlog = async blogObj => {
@@ -95,29 +109,28 @@ const App = (props) => {
   const loginForm = () => {
     return (
       <div>
-        <h2>log in to application</h2>
+        <Typography variant='h4' component='h2'>
+          Sign In!
+        </Typography>
         <form onSubmit={handleLogin}>
           <div>
-            username
-            <input
-              id='username'
+            <TextField
               type='text'
               value={username}
-              name='Username'
+              label='Username'
               onChange={({ target }) => props.updateUsername(target.value)}
             />
           </div>
           <div>
-            password
-            <input
-              id='password'
+            <TextField
               type='password'
               value={password}
-              name='Password'
+              label='Password'
               onChange={({ target }) => props.updatePassword(target.value)}
             />
           </div>
-          <button id='login-button' type='submit'>login</button>
+          <br/>
+          <Button type='submit' color='primary' variant='contained'>login</Button>
         </form>
       </div>
     )
@@ -133,21 +146,25 @@ const App = (props) => {
     )
   }
 
-  const linkPadding = {
-    padding: 5
-  }
+  const classes = useStyles()
 
   return (
-    <div>
+    <Container>
       {props.user &&
-          <div className='nav'>
-            <Link style={linkPadding} to='/'>Blogs</Link>
-            <Link style={linkPadding} to='/users'>Users</Link>
-            {props.user.name} logged in
-            <button onClick={handleLogout}>
-              logout
-            </button>
-          </div>
+        <AppBar position='static'>
+          <Toolbar>
+            <div  className={classes.navItem}>
+              <Button color='inherit' component={Link} to='/'>
+                Blogs
+              </Button>
+              <Button color='inherit'  component={Link} to='/users'>
+                Users
+              </Button>
+            </div>
+            <Button color='inherit' onClick={handleLogout}>Logout</Button>
+            <Avatar className={classes.avatar}>{props.user.name.charAt(0)}</Avatar>
+          </Toolbar>
+        </AppBar>
       }
 
       <ErrorNoti message={errorMessage} />
@@ -155,7 +172,9 @@ const App = (props) => {
 
       {props.user !== null &&
         <div>
-          <h2>Blog App</h2>
+          <Typography variant='h5' component='h5'>
+            Blog App
+          </Typography>
         </div>
       }
 
@@ -174,8 +193,13 @@ const App = (props) => {
 
           {props.user !== null &&
               <div>
-                <h3>create new</h3>
+                <br />
+                <Typography variant='h6' component='h5'>
+                  Create New!
+                </Typography>
                 {blogForm()}
+                <br/>
+                <br/>
                 <div>
                   {props.blogs.map((blog, index) =>
                     <Blog
@@ -189,9 +213,19 @@ const App = (props) => {
               </div>}
         </Route>
       </Switch>
-    </div>
+    </Container>
   )
 }
+
+const useStyles = makeStyles(theme => ({
+  navItem: {
+    flexGrow: 1
+  },
+  avatar: {
+    width: theme.spacing(4),
+    height: theme.spacing(4)
+  }
+}))
 
 const mapStateToProps = state => {
   return {

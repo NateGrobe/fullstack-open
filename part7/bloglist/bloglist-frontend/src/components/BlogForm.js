@@ -9,6 +9,12 @@ import {
   clearBlogForm
 } from '../reducers/blogFormReducer'
 
+import {
+  TextField,
+  Button,
+  makeStyles
+} from '@material-ui/core'
+
 import { setSuccNotification } from '../reducers/notificationReducer'
 
 const BlogForm = (props) => {
@@ -25,44 +31,48 @@ const BlogForm = (props) => {
     props.setSuccNotification( `a new blog ${title} by ${author} added`)
   }
 
+  const classes = useStyles()
+
   return (
     <div>
       <form onSubmit={addBlog}>
+        <TextField
+          className={classes.inputs}
+          variant='outlined'
+          type='text'
+          value={title}
+          label='Title'
+          onChange={({ target }) => props.updateTitle(target.value)}
+        />
+        <TextField
+          className={classes.inputs}
+          variant='outlined'
+          type='text'
+          value={author}
+          label='Author'
+          onChange={({ target }) => props.updateAuthor(target.value)}
+        />
+        <TextField
+          className={classes.inputs}
+          variant='outlined'
+          type='text'
+          value={url}
+          label='URL'
+          onChange={({ target }) => props.updateUrl(target.value)}
+        />
         <div>
-          title:
-          <input
-            id='title'
-            type='text'
-            value={title}
-            name='Title'
-            onChange={({ target }) => props.updateTitle(target.value)}
-          />
+          <Button color='primary' type='submit'>create</Button>
         </div>
-        <div>
-          author:
-          <input
-            id='author'
-            type='text'
-            value={author}
-            name='Author'
-            onChange={({ target }) => props.updateAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url:
-          <input
-            id='url'
-            type='text'
-            value={url}
-            name='URL'
-            onChange={({ target }) => props.updateUrl(target.value)}
-          />
-        </div>
-        <button id='create-button' type='submit'>create</button>
       </form>
     </div>
   )
 }
+
+const useStyles = makeStyles(theme => ({
+  inputs: {
+    marginRight: theme.spacing(1)
+  }
+}))
 
 BlogForm.propTypes = {
   addBlog: PropTypes.func.isRequired

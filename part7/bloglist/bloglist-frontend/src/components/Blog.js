@@ -2,6 +2,17 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { likeBlog } from '../reducers/blogReducer'
 import { Link } from 'react-router-dom'
+import {
+  Typography,
+  Button,
+  makeStyles
+} from '@material-ui/core'
+
+const classes = makeStyles(theme => ({
+  button: {
+    marginLeft: 5
+  }
+}))
 
 const Blog = (props) => {
   const blogStyle = {
@@ -14,14 +25,16 @@ const Blog = (props) => {
   return (
     <div id={props.index} style={blogStyle}>
       <div className='unexpanded-div'>
-        <Link to={`/blogs/${props.blog.id}`}>
+        <Typography component={Link} to={`/blogs/${props.blog.id}`}>
           {props.blog.title} {props.blog.author}
-        </Link>
-        <button
+        </Typography>
+        <Button
+          className={classes.button}
+          color='secondary'
           onClick={() => props.removeBlog(props.blog.id, props.blog.title)}
         >
           remove
-        </button>
+        </Button>
       </div>
     </div>
   )

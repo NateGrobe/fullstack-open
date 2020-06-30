@@ -5,6 +5,17 @@ import { likeBlog } from '../reducers/blogReducer'
 import { updateComment, clearComment } from '../reducers/commentFormReducer'
 import { commentOnBlog } from '../reducers/blogReducer'
 
+import {
+  TextField,
+  Link,
+  Button,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Paper
+} from '@material-ui/core'
+
 const BlogView = (props) => {
   const id = useParams().id
   const blog = props.blogs.find(blog => blog.id === id)
@@ -29,12 +40,17 @@ const BlogView = (props) => {
   const commentForm = () => {
     return (
       <form onSubmit={addComment}>
-        <input
+        <TextField
+          variant='outlined'
+          label='comment'
           type='text'
           value={props.comment}
           onChange={({ target }) => props.updateComment(target.value)}
         />
-        <button type='submit'>add comment</button>
+        <br />
+        <Button variant='contained' color='primary' type='submit'>
+          add comment
+        </Button>
       </form>
     )
   }
@@ -43,18 +59,40 @@ const BlogView = (props) => {
 
   return (
     <div>
-      <h2>{blog.title}</h2>
-      <a href={`https://${blog.url}`}>{blog.url}</a>
-      <p>{blog.likes} likes <button onClick={addLike}>like</button></p>
-      <p>added by {blog.author}</p>
+      <br />
+      <Typography variant='h5' component='h2'>
+        {blog.title}
+      </Typography>
+      <Link variant='subtitle1' href={`https://${blog.url}`}>
+        {blog.url}
+      </Link>
+      <Typography variant='subtitle1' component='p'>
+        {blog.likes} likes
+        <Button onClick={addLike} color='primary'>
+          like
+        </Button>
+      </Typography>
 
-      <h3>comments:</h3>
+      <Typography variant='subtitle1' component='p'>
+        added by: {blog.author}
+      </Typography>
+
+      <br/>
+      <br/>
+      <Typography variant='h6' component='p'>
+        comments:
+      </Typography>
+
       {commentForm()}
-      <ul>
+      <br/>
+      <br/>
+      <List component={Paper}>
         {blog.comments.map((c, i) =>
-          <li key={i}>{c}</li>
+          <ListItem dense={true} key={i}>
+            <ListItemText primary={c} />
+          </ListItem>
         )}
-      </ul>
+      </List>
     </div>
   )
 }

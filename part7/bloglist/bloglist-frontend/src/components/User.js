@@ -2,6 +2,13 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 
+import {
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+} from '@material-ui/core'
+
 const User = (props) => {
   const id = useParams().id
   const user = props.users.find(user => user.id === id)
@@ -10,14 +17,23 @@ const User = (props) => {
 
   return (
     <div>
-      <h2>{user.name}</h2>
+      <br/>
+      <Typography variant='h5' component='h4'>
+        {user.name}
+      </Typography>
 
-      <h3>added blogs</h3>
-      <ul>
+      <br />
+      <br />
+      <Typography variant='h6' component='h6'>
+        Added Blogs:
+      </Typography>
+      <List>
         {user.blogs.map(blog =>
-          <li key={blog.id}>{blog.title}</li>
+          <ListItem dense={true} key={blog.id}>
+            <ListItemText primary={blog.title} />
+          </ListItem>
         )}
-      </ul>
+      </List>
     </div>
   )
 }
