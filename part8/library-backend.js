@@ -100,6 +100,10 @@ const typeDefs = gql`
   }
 `
 
+function filterByGenre(booksArr, givenGenre) {
+  return booksArr.filter(book => book.genres.includes(givenGenre))
+}
+
 const resolvers = {
   Query: {
     bookCount: () => books.length,
@@ -110,9 +114,8 @@ const resolvers = {
       if(args.author)
         filteredBooks = books.filter(book => book.author == args.author)
       if (args.genre) {
-        if(filteredBooks)
-          return filteredBooks.filter(book => book.genres.includes(args.genre))
-        return books.filter(book => book.genres.includes(args.genre))
+        if(filteredBooks) return filterByGenre(filteredBooks, args.genre)
+        return filterByGenre(books, args.genre)
       }
     },
     allAuthors: () => authors
