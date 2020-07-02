@@ -1,10 +1,10 @@
 {
-  "name": "part8",
+  "name": "gql",
   "version": "1.0.0",
   "description": "",
   "main": "library-backend.js",
   "scripts": {
-    "apollo": "nodemon library-backend.js",
+    "dev": "nodemon library-backend.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
