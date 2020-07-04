@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const mongoose = require('mongoose')
 const { v1: uuid } = require('uuid')
 require('dotenv').config()
@@ -16,34 +16,6 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
   .catch(error => {
     console.log('error connection to MongoDB:', error.message)
   })
-
-/*
-let authors = [
-  {
-    name: 'Robert Martin',
-    id: "afa51ab0-344d-11e9-a414-719c6709cf3e",
-    born: 1952,
-  },
-  {
-    name: 'Martin Fowler',
-    id: "afa5b6f0-344d-11e9-a414-719c6709cf3e",
-    born: 1963
-  },
-  {
-    name: 'Fyodor Dostoevsky',
-    id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
-    born: 1821
-  },
-  { 
-    name: 'Joshua Kerievsky', // birthyear not known
-    id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
-  },
-  { 
-    name: 'Sandi Metz', // birthyear not known
-    id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
-  },
-]
-*/
 
 const typeDefs = gql`
   type Book {
@@ -107,7 +79,6 @@ const resolvers = {
     }
   },
   Author: {
-    // doesn't need to work
     bookCount: async root => {
       const books = await Book.find({})
       return books.filter(book => 
@@ -126,19 +97,33 @@ const resolvers = {
     addBook: async (root, args) => {
       let author = await Author.findOne({ name: args.authorName })
       if (!author) {
-        author = await new Author({ name: args.authorName })
-        await author.save()
+        author = new Author({ name: args.authorName })
       }
       const authorId = author._id
       const book = new Book({ ...args, author: authorId })
-      return book.save()
+      try {
+        await book.save()
+        await author.save()
+      } catch(error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args
+        })
+      }
+
+      return book
     },
-    // doesn't need to work
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
-      if (!author) return null
       author.born = args.setBornTo
-      return author.save()
+
+      try {
+        await author.save()
+      } catch(error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      }
+      return author
     }
   }
 }
