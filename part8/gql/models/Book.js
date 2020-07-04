@@ -7,12 +7,16 @@ const schema = new mongoose.Schema({
     unique: true,
     minlength: 2
   },
+  published: {
+    type: Number,
+  },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Author'
   },
-  published: Number,
-  genres: [String]
+  genres: [
+    { type: String}
+  ]
 })
 
 module.exports = mongoose.model('Book', schema)

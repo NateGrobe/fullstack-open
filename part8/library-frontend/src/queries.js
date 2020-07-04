@@ -16,7 +16,6 @@ query {
     title
     author {
       name
-      born
     }
     published
     genres

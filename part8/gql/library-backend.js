@@ -22,20 +22,21 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
   })
 
 const typeDefs = gql`
-  type Book {
-    title: String!
-    published: Int!
-    author: Author!
-    genres: [String!]!
-    id: ID!
-  }
-
   type Author {
     name: String!
     born: Int
     id: ID!
-    bookCount: Int!
+    bookCount: Int
   }
+
+  type Book {
+    title: String!
+    author: Author!
+    published: Int!
+    genres: [String!]!
+    id: ID!
+  }
+
 
   type User {
     username: String!
@@ -77,25 +78,19 @@ const typeDefs = gql`
 `
 
 function filterByGenre(booksArr, givenGenre) {
+  if (!givenGenre || givenGenre === '') return booksArr
   return booksArr.filter(book => book.genres.includes(givenGenre))
 }
 
 const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
-    // doesn't need to work
     allBooks: async (root, args) => {
-      const books = await Book.find({})
-      if (!args.author && !args.genre) return books
-      let filteredBooks
-      if(args.author) {
-        const author = await Author.findOne({ name: args.author})
-        filteredBooks = books.filter(book => book.author == author.id)
-      }
-      if (args.genre) {
-        if(filteredBooks) return filterByGenre(filteredBooks, args.genre)
-        return filterByGenre(books, args.genre)
-      }
+      const books = await Book.find({}).populate('author')
+      let filteredBooks = filterByGenre(books, args.genre)
+
+      if (args.author) 
+        return filteredBooks.filter(book => book.author.name === args.author)
 
       return filteredBooks
     },
@@ -104,20 +99,20 @@ const resolvers = {
     },
     me: (root, args, context) => context.currentUser,
   },
+  Book: {
+    author: root => {
+      return {
+        name: root.author.name,
+        born: root.author.born
+      }
+    }
+  },
   Author: {
     bookCount: async root => {
       const books = await Book.find({})
       return books.filter(book => 
         book.author.toString() === root._id.toString()).length
     },
-  },
-  Book: {
-    author: root => {
-      return {
-        name: root.name,
-        born: root.born
-      }
-    }
   },
   Mutation: {
     addBook: async (root, args, context) => {
