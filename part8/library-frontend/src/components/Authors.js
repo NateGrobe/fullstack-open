@@ -6,7 +6,7 @@ import Select from 'react-select'
 const Authors = (props) => {
   const [name, setName] = useState(null)
   const [born, setBorn] = useState('')
-
+  const [loggedIn, setLoggedIn] = useState(false)
   const result = useQuery(ALL_AUTHORS)
 
   const [editAuthorBirth] = useMutation(EDIT_AUTHOR, {
@@ -61,25 +61,28 @@ const Authors = (props) => {
         </tbody>
       </table>
       <br />
-      <h2>Set birthyear</h2>
-      <form onSubmit={modAuthor}>
-        <div>
-          <Select 
-            value={name}
-            onChange={setSelectedAuthor}
-            options={options}
-          />
-        </div>
-        <div>
-          born
-          <input
-            value={born}
-            onChange={({ target }) => setBorn(target.value)}
-          />
-        </div>
-        <button type='submit'>update author</button>
-      </form>
-
+      {props.token &&
+      <div>
+        <h2>Set birthyear</h2>
+        <form onSubmit={modAuthor}>
+          <div>
+            <Select 
+              value={name}
+              onChange={setSelectedAuthor}
+              options={options}
+            />
+          </div>
+          <div>
+            born
+            <input
+              value={born}
+              onChange={({ target }) => setBorn(target.value)}
+            />
+          </div>
+          <button type='submit'>update author</button>
+        </form>
+      </div>
+      }
     </div>
   )
 }
