@@ -6,7 +6,6 @@ import Select from 'react-select'
 const Authors = (props) => {
   const [name, setName] = useState(null)
   const [born, setBorn] = useState('')
-  const [loggedIn, setLoggedIn] = useState(false)
   const result = useQuery(ALL_AUTHORS)
 
   const [editAuthorBirth] = useMutation(EDIT_AUTHOR, {

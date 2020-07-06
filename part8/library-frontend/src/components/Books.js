@@ -41,7 +41,6 @@ const Books = (props) => {
         <button onClick={() => filterGenre('')}>all genres</button>
       </div>
     )
-
   }
 
   return (

@@ -97,7 +97,9 @@ const resolvers = {
     allAuthors: () => {
       return Author.find({})
     },
-    me: (root, args, context) => context.currentUser,
+    me: (root, args, context) => {
+      return context.currentUser
+    }
   },
   Book: {
     author: root => {
@@ -184,6 +186,7 @@ const server = new ApolloServer({
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
+      console.log('here')
       const decodedToken = jwt.verify(
         auth.substring(7), SECRET
       )
