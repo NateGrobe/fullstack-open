@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery, useLazyQuery } from '@apollo/client'
-import { GET_USER, ALL_BOOKS, ALL_BOOKS_GENRE } from '../queries'
+import { useQuery } from '@apollo/client'
+import { GET_USER, ALL_BOOKS_GENRE } from '../queries'
 
 const Recommended = (props) => {
   const [favGenre, setFavGenre] = useState('')
