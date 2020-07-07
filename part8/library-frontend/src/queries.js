@@ -78,3 +78,15 @@ subscription {
   }
 }
 `
+
+export const ALL_BOOKS_GENRE = gql`
+query allBooksGenre($genre: String!){
+  allBooks(genre: $genre) {
+    title
+    author {
+      name
+    }
+    published
+  }
+}
+`
