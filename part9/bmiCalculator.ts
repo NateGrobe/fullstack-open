@@ -16,15 +16,15 @@ const parseArgs = (args: Array<string>): Input => {
   }
 }
 
-const calculateBmi = (weight: number, height: number): string => {
+export const calculateBmi = (weight: number, height: number): string => {
   if (height > 0 ) {
-    const bmi: number = weight / height;
+    const bmi: number = weight / (Math.pow(height/100, 2));
 
-    if (bmi > 3) {
+    if (bmi > 30) {
       return 'Obese (unhealthy weight)';
-    } else if (bmi < 3 && bmi > 2.5 ) {
+    } else if (bmi < 30 && bmi > 25 ) {
       return 'Overweight (unhealthy weight)';
-    } else if (bmi < 2.5 && bmi > 1.85) {
+    } else if (bmi < 25 && bmi > 18.5) {
       return 'Normal weight (healthy weight)';
     } else {
       return 'Underweight (unhealthy weight)';
@@ -39,6 +39,6 @@ try {
   const { weight, height } = parseArgs(process.argv);
   console.log(calculateBmi(weight, height));
 } catch (e) {
-  console.log('Error, something bad happended, message: ', e.message);
+  console.log('Error, something bad happended, message:', e.message);
 }
 
