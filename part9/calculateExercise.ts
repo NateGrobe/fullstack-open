@@ -16,7 +16,7 @@ interface StartingValues {
 const parseArgs = (args: Array<string>): StartingValues => {
   if (isNaN(Number(args[2]))) throw new Error('The target must be a number');
 
-  const th: number = Number(args[2]);
+  const th = Number(args[2]);
   const eh: Array<number> = [];
   
   args.forEach((a, i) => {
@@ -27,8 +27,8 @@ const parseArgs = (args: Array<string>): StartingValues => {
   return {
     exerciseHours: eh,
     targetHours: th
-  }
-}
+  };
+};
 
 const calculateExercise = (exerciseHours: Array<number>, targetHours: number): TrainingData => {
   const periodLength = exerciseHours.length;
@@ -56,8 +56,8 @@ const calculateExercise = (exerciseHours: Array<number>, targetHours: number): T
     ratingDescription,
     target: targetHours,
     average: exerciseHours.reduce((a, b) => a + b, 0) / periodLength
-  }
-}
+  };
+};
 
 try {
   const { exerciseHours, targetHours } = parseArgs(process.argv);

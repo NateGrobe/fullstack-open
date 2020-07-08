@@ -10,11 +10,11 @@ const parseArgs = (args: Array<string>): Input => {
     return {
       weight: Number(args[2]),
       height: Number(args[3])
-    }
+    };
   } else {
     throw new Error('Provided values were not numbers');
   }
-}
+};
 
 export const calculateBmi = (weight: number, height: number): string => {
   if (height > 0 ) {
@@ -33,7 +33,7 @@ export const calculateBmi = (weight: number, height: number): string => {
   } else {
     throw new Error('Height must be greater than zero');
   }
-}
+};
 
 try {
   const { weight, height } = parseArgs(process.argv);
@@ -41,4 +41,3 @@ try {
 } catch (e) {
   console.log('Error, something bad happended, message:', e.message);
 }
-
