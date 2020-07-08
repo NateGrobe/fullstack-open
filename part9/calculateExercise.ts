@@ -30,7 +30,7 @@ const parseArgs = (args: Array<string>): StartingValues => {
   };
 };
 
-const calculateExercise = (exerciseHours: Array<number>, targetHours: number): TrainingData => {
+export const calculateExercise = (exerciseHours: Array<number>, targetHours: number): TrainingData => {
   const periodLength = exerciseHours.length;
   const trainingDays: number = exerciseHours.filter(d => d !== 0).length;
   const success: boolean = exerciseHours.filter(d => d >= 2).length === exerciseHours.length;
