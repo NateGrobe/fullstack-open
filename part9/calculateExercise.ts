@@ -8,6 +8,28 @@ interface TrainingData {
   average: number
 }
 
+interface StartingValues {
+  exerciseHours: Array<number>,
+  targetHours: number
+}
+
+const parseArgs = (args: Array<string>): StartingValues => {
+  if (isNaN(Number(args[2]))) throw new Error('The target must be a number');
+
+  const th: number = Number(args[2]);
+  const eh: Array<number> = [];
+  
+  args.forEach((a, i) => {
+    if(isNaN(Number(a)) && i > 2) throw new Error('Daily exercise must be a number');
+    if (i > 2) eh.push(Number(a));
+  });
+
+  return {
+    exerciseHours: eh,
+    targetHours: th
+  }
+}
+
 const calculateExercise = (exerciseHours: Array<number>, targetHours: number): TrainingData => {
   const periodLength = exerciseHours.length;
   const trainingDays: number = exerciseHours.filter(d => d !== 0).length;
@@ -17,7 +39,7 @@ const calculateExercise = (exerciseHours: Array<number>, targetHours: number): T
 
   if (success) {
     rating = 3;
-    ratingDescription = 'well done'
+    ratingDescription = 'well done';
   } else if (trainingDays > periodLength / 2) {
     rating = 2;
     ratingDescription = 'not too bad but could be better';
@@ -37,4 +59,9 @@ const calculateExercise = (exerciseHours: Array<number>, targetHours: number): T
   }
 }
 
-console.log(calculateExercise([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const { exerciseHours, targetHours } = parseArgs(process.argv);
+  console.log(calculateExercise(exerciseHours, targetHours));
+} catch(e) {
+  console.log('Error, something bad happened, message: ', e.message);
+}
