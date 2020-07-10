@@ -1,12 +1,12 @@
 import React from 'react';
 import axios from 'axios';
-import { Container, Table, Button, Icon } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 
 import { useStateValue, updatePatient, setDiagnosesList } from '../state';
 import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from '../constants';
 import { Patient, Diagnosis } from '../types';
-import DiagnosisItem from './DiagnosisItem';
+import EntryInfo from './EntryInfo';
 
 
 const PatientPage: React.FC = () => {
@@ -36,7 +36,7 @@ const PatientPage: React.FC = () => {
     }
     fetchPatient();
     fetchDiagnoses();
-  }, [dispatch])
+  }, [id, dispatch])
 
   if (!patient || !diagnosis) return null;
 
@@ -56,14 +56,7 @@ const PatientPage: React.FC = () => {
       {patient.entries.length > 0 && <h3>Entries</h3>}
       {patient.entries.map(entry =>
         <div key={entry.date}>
-          <p>{entry.date} {entry.description}</p>
-          <ul>
-          {entry.diagnosisCodes?.map(code => 
-            <li key={code}>
-              <DiagnosisItem diagnosis={Object.values(diagnosis).find(dia => dia.code === code)} />
-            </li>
-          )}
-          </ul>
+            <EntryInfo entry={entry} />
         </div>
       )}
     </div>
