@@ -11,7 +11,7 @@ import { Patient } from '../types';
 const PatientPage: React.FC = () => {
   const [{ patients }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string}>();
-  const patient: Patient | undefined = Object.values(patients).find(p => p.id === id);
+  let patient: Patient | undefined = Object.values(patients).find(p => p.id === id);
 
   React.useEffect(() => {
     const fetchPatient = async () => {
@@ -24,7 +24,10 @@ const PatientPage: React.FC = () => {
         console.log(e);
       }
     }
-    if(!patient) fetchPatient();
+    if(!patient){
+        fetchPatient();
+        console.log('here')
+    } 
   }, [dispatch])
 
   if (!patient) return null;
@@ -37,12 +40,20 @@ const PatientPage: React.FC = () => {
     genderIcon = <Icon name='venus' />;
 
 
-
   return (
     <div>
       <h2>{patient.name} {genderIcon}</h2>
       <p>ssn: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
+      {patient.entries && <h3>Entries</h3>}
+      {patient.entries.map(entry =>
+        <div key={entry.date}>
+          <p>{entry.date} {entry.description}</p>
+          <ul>
+          {entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
