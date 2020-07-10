@@ -1,6 +1,6 @@
-import { NewPatient, Gender } from './types';
+import { NewPatient, Gender, NewEntry } from './types';
 
-const toNewPatient = (object: any): NewPatient => {
+export const toNewPatient = (object: any): NewPatient => {
   return {
     name: parseName(object.name),
     dateOfBirth: parseDate(object.dateOfBirth),
@@ -59,4 +59,6 @@ const parseGender = (gender: any): Gender => {
   return gender;
 };
 
-export default toNewPatient;
+export const toNewEntry = (object: any): NewEntry => {
+  return object as NewEntry;
+}

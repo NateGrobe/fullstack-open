@@ -52,6 +52,13 @@ export type Entry =
 | OccupationalHealthCareEntry
 | HealthCheckEntry;
 
+// no idea what this does but fixed the issue so thank you stack overflow
+type DistributiveOmit<T, K extends keyof any> = T extends any
+  ? Omit<T, K>
+  : never;
+
+export type NewEntry = DistributiveOmit<Entry, 'id'>;
+
 export interface Patient {
   id: string;
   name: string;

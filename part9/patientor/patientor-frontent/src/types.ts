@@ -64,7 +64,7 @@ export interface Patient {
   entries: Entry[];
 };
 
-export type PublicPatien = Omit<Patient, 'ssn' | 'entries'>
+export type PublicPatient = Omit<Patient, 'ssn' | 'entries'>
 
 export type NewPatient = Omit<Patient, 'id'>;
 
