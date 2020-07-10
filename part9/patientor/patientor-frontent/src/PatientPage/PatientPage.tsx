@@ -2,14 +2,15 @@ import React from 'react';
 import axios from 'axios';
 import { Container, Table, Button, Icon } from "semantic-ui-react";
 
-import { useStateValue, updatePatient } from '../state';
+import { useStateValue, updatePatient, setDiagnosesList } from '../state';
 import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from '../constants';
-import { Patient } from '../types';
+import { Patient, Diagnosis } from '../types';
+import DiagnosisItem from './DiagnosisItem';
 
 
 const PatientPage: React.FC = () => {
-  const [{ patients }, dispatch] = useStateValue();
+  const [{ patients, diagnosis }, dispatch] = useStateValue();
   const { id } = useParams<{ id: string}>();
   let patient: Patient | undefined = Object.values(patients).find(p => p.id === id);
 
@@ -24,13 +25,20 @@ const PatientPage: React.FC = () => {
         console.log(e);
       }
     }
-    if(!patient){
-        fetchPatient();
-        console.log('here')
-    } 
+
+    const fetchDiagnoses = async () => {
+      try {
+          const { data: diagnosisFromApi } = await axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
+          dispatch(setDiagnosesList(diagnosisFromApi));
+      } catch (e) {
+          console.log(e);
+      }
+    }
+    fetchPatient();
+    fetchDiagnoses();
   }, [dispatch])
 
-  if (!patient) return null;
+  if (!patient || !diagnosis) return null;
 
   let genderIcon = <Icon name='genderless' />;
 
@@ -45,12 +53,16 @@ const PatientPage: React.FC = () => {
       <h2>{patient.name} {genderIcon}</h2>
       <p>ssn: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
-      {patient.entries && <h3>Entries</h3>}
+      {patient.entries.length > 0 && <h3>Entries</h3>}
       {patient.entries.map(entry =>
         <div key={entry.date}>
           <p>{entry.date} {entry.description}</p>
           <ul>
-          {entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}
+          {entry.diagnosisCodes?.map(code => 
+            <li key={code}>
+              <DiagnosisItem diagnosis={Object.values(diagnosis).find(dia => dia.code === code)} />
+            </li>
+          )}
           </ul>
         </div>
       )}
